@@ -1,6 +1,6 @@
 FROM gradle:8.5-jdk21-alpine AS build
 WORKDIR /app
-COPY build.gradle settings.gradle ./
+COPY build.gradle.kts settings.gradle.kts ./
 COPY src ./src
 RUN gradle build -x test --no-daemon
 
