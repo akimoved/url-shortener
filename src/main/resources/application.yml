@@ -3,7 +3,7 @@ spring:
     name: url-shortener
 
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/urlshortener}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5433/urlshortener}
     username: ${SPRING_DATASOURCE_USERNAME:admin}
     password: ${SPRING_DATASOURCE_PASSWORD:admin123}
     driver-class-name: org.postgresql.Driver
