@@ -24,7 +24,7 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5433/urlshortener
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/urlshortener
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin123
     depends_on:
