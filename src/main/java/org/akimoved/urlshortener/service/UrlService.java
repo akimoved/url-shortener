@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
@@ -49,7 +50,17 @@ public class UrlService {
     }
 
     private ShortenUrlResponse createShortUrl(String originalUrl) {
-        String shortCode = generateShortCode(originalUrl);
+        String shortCode;
+        int attempts = 0;
+        int maxAttempts = 5;
+
+        do {
+            shortCode = generateShortCode(originalUrl + attempts);
+            attempts++;
+            if (attempts >= maxAttempts) {
+                throw new RuntimeException("Failed to generate unique short code after " + maxAttempts + " attempts");
+            }
+        } while (urlRepository.findByShortCode(shortCode).isPresent());
 
         Url url = Url.builder()
                 .shortCode(shortCode)
@@ -60,14 +71,14 @@ public class UrlService {
         return toResponse(url);
     }
 
-    private String generateShortCode(String originalUrl) {
+    private String generateShortCode(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] hash = digest.digest((originalUrl + System.nanoTime()).getBytes());
+            byte[] hash = digest.digest(input.getBytes(StandardCharsets.UTF_8)); // Явное указание кодировки
             String encoded = Base64.getUrlEncoder().withoutPadding().encodeToString(hash);
             return encoded.substring(0, codeLength);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException("Failed to generate short code", e);
+            throw new IllegalStateException("SHA-256 algorithm not available", e);
         }
     }
 
